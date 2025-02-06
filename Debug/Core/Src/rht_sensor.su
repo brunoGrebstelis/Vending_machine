@@ -1,0 +1,3 @@
+rht_sensor.c:13:19:AHT20_ReadData	56	static
+rht_sensor.c:51:6:AHT20_CalculateValues	32	static
+rht_sensor.c:60:19:AHT20_ReadData_PCA9548A	56	static

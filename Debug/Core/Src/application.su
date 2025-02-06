@@ -1,0 +1,17 @@
+application.c:69:6:HAL_SPI_RxCpltCallback	16	static
+application.c:77:6:Process_SPI_Command	48	static
+application.c:127:6:I2C_Master_Send_Byte	24	static
+application.c:134:6:Send_RGB	40	static
+application.c:150:6:Send_Price	32	static
+application.c:167:6:SPI_SendMessage	24	static
+application.c:182:9:calculate_checksum	16	static
+application.c:187:6:open_cabinet	48	static
+application.c:247:5:read_cabinet_status	40	static
+application.c:300:6:RS485_SetTransmitMode	8	static
+application.c:306:6:RS485_SetReceiveMode	8	static
+application.c:312:6:RS485_Transmit	16	static
+application.c:319:6:RS485_Receive	24	static
+application.c:325:6:HandleState	24	static
+application.c:379:6:CheckAllLockersAfterDelay	24	static
+application.c:411:6:CheckTemperature	32	static
+application.c:451:5:__io_putchar	16	static
