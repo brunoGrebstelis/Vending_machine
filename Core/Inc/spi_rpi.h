@@ -13,7 +13,7 @@
 #include "locker.h"
 #include <stdint.h>
 #include <stdio.h>
-
+#include <stdbool.h>
 
 #define SPI_BUFFER_SIZE 6
 
@@ -21,6 +21,7 @@
 extern uint8_t spi_rx_buffer[SPI_BUFFER_SIZE];
 extern uint8_t spi_tx_buffer[SPI_BUFFER_SIZE];
 
+bool getSPIFlag();
 void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi);
 void Process_SPI_Command(uint8_t *data, uint16_t size);
 void SPI_SendMessage(uint8_t command, uint8_t locker_id, uint8_t data1, uint8_t data2, uint8_t data3, uint8_t data4);

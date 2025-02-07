@@ -10,19 +10,29 @@
 uint8_t spi_rx_buffer[SPI_BUFFER_SIZE];
 uint8_t spi_tx_buffer[SPI_BUFFER_SIZE];
 
+static bool spi_flag = false;
 
 extern SPI_HandleTypeDef hspi1;
+
+
+bool getSPIFlag(){
+	return spi_flag;
+}
+
 
 // SPI receive complete callback
 void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi) {
     if (hspi->Instance == SPI1) {
-        Process_SPI_Command(spi_rx_buffer, SPI_BUFFER_SIZE);
+        //Process_SPI_Command(spi_rx_buffer, SPI_BUFFER_SIZE);
         HAL_SPI_Receive_IT(&hspi1, spi_rx_buffer, SPI_BUFFER_SIZE);
+        spi_flag = true;
     }
 }
 
+
 // Function to handle received SPI data
 void Process_SPI_Command(uint8_t *data, uint16_t size) {
+	spi_flag = false;
 	uint8_t red = 255;
 	uint8_t green = 255;
 	uint8_t blue = 255;

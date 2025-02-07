@@ -15,6 +15,9 @@ void init_application(){
 }
 
 void loop_application(){
+
+	if(getSPIFlag())Process_SPI_Command(spi_rx_buffer, SPI_BUFFER_SIZE);
+
 	if(get_error_flag()) HandleState();
 
     if(get_locker_flag()) CheckAllLockersAfterDelay();
