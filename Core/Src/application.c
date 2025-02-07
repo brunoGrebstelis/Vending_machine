@@ -7,22 +7,26 @@
 
 #include "application.h"
 
+uint64_t lastTime = 0;
+
+void init_application(){
+	printf("STM32 SPI Slave Ready\r\n"); // Print ready message
+	HAL_SPI_Receive_IT(&hspi1, spi_rx_buffer, SPI_BUFFER_SIZE);
+}
+
+void loop_application(){
+	if(get_error_flag()) HandleState();
+
+    if(get_locker_flag()) CheckAllLockersAfterDelay();
+
+    if(HAL_GetTick() - lastTime >= 5000) {
+      lastTime = HAL_GetTick();
+      CheckTemperature();
+    }
+}
 
 
 
-
-/* USER CODE BEGIN PV */
-
-
-
-/* USER CODE END PV */
-
-/* USER CODE BEGIN Includes */
-
-
-/* USER CODE END Includes */
-
-/* USER CODE BEGIN 0 */
 
 //typedef struct{
 //	uint8_t address;
@@ -34,9 +38,6 @@
 //temperature_sensor_t sensors[8];
 //sensors[0].address = 0x01;
 
-/* USER CODE END 0 */
-
-/* USER CODE BEGIN 1 */
 
 
 
@@ -45,12 +46,3 @@
 
 
 
-
-
-
-
-
-
-
-
-/* USER CODE END 1 */

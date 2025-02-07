@@ -1,0 +1,2 @@
+application.c:12:6:init_application	8	static
+application.c:17:6:loop_application	16	static

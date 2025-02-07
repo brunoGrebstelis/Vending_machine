@@ -24,7 +24,6 @@ void RS485_SetTransmitMode(void);
 void RS485_SetReceiveMode(void);
 void RS485_Transmit(uint8_t *data, uint16_t size);
 void RS485_Receive(uint8_t *data, uint16_t size, uint32_t timeout);
-void RS485_Receive(uint8_t *data, uint16_t size, uint32_t timeout);
 
 
 #endif /* INC_LOCKER_H_ */

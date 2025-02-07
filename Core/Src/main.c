@@ -73,7 +73,7 @@ static void MX_USART2_UART_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-uint64_t lastTime = 0;
+
 /* USER CODE END 0 */
 
 /**
@@ -108,8 +108,7 @@ int main(void)
   MX_I2C2_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-  printf("STM32 SPI Slave Ready\r\n"); // Print ready message
-  HAL_SPI_Receive_IT(&hspi1, spi_rx_buffer, SPI_BUFFER_SIZE);
+  init_application();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -118,14 +117,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    if(get_error_flag()) HandleState();
-
-    if(get_locker_flag()) CheckAllLockersAfterDelay();
-
-    if(HAL_GetTick() - lastTime >= 5000) {
-      lastTime = HAL_GetTick();
-      CheckTemperature();
-    }
+	loop_application();
 
   }
   /* USER CODE END 3 */
