@@ -9,55 +9,21 @@
 #define INC_APPLICATION_H_
 
 #include "main.h"
+#include "aht20_sensor.h"
+#include "error_handler.h"
+#include "print.h"
+
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdio.h>
+#include <string.h>
 
 /* Original #defines from the code ------------------------------------------*/
-#define SPI_BUFFER_SIZE 6
+
 #define SLAVE_ADDRESS 0x0B
 #define DELAY_MS 370
 
-#define PCA9548A_ADDRESS 0x70
-#define CHANNEL_0_MASK 0x01
-#define CHANNEL_1_MASK 0x02
-#define CHANNEL_2_MASK 0x04
-#define CHANNEL_3_MASK 0x08
-#define CHANNEL_4_MASK 0x10
-#define CHANNEL_5_MASK 0x20
-#define CHANNEL_6_MASK 0x40
-#define CHANNEL_7_MASK 0x80
 
-#define LOCKER_CHECK_DELAY 60000  // e.g. 5 minutes in ms
-
-/* Enum from original code */
-typedef enum {
-    STATE_JAMMED = 1,     // Case 1
-    STATE_OPENED,         // Case 2
-    STATE_CLOSED,         // Case 3
-    STATE_PRICE_TAG,      // Case 4
-    STATE_LED_DRIVER,     // Case 5
-    STATE_TEMPERATURE,    // Case 6
-    STATE_SENSOR,         // Case 7
-    NO_ERROR
-} SystemErrorState;
-
-/* Global variables that need to be visible project-wide ---------------------*/
-extern bool error_flag;
-extern bool tempSensFailed;
-extern bool tempBelowZero;
-extern uint8_t error_locker;
-extern SystemErrorState errorState;
-extern bool lockerFlag;
-extern bool lockerOpened[24];
-extern bool checkPending[24];
-extern uint32_t openTimestamp[24];
-extern uint32_t lastTime;
-
-/* Also the color/mode variables used in Process_SPI_Command */
-extern uint8_t red;
-extern uint8_t green;
-extern uint8_t blue;
-extern uint8_t mode;
 
 /* Function prototypes (from original code) ---------------------------------*/
 void Process_SPI_Command(uint8_t *data, uint16_t size);
@@ -74,7 +40,7 @@ void RS485_SetTransmitMode(void);
 void RS485_SetReceiveMode(void);
 void RS485_Transmit(uint8_t *data, uint16_t size);
 void RS485_Receive(uint8_t *data, uint16_t size, uint32_t timeout);
-void HandleState(SystemErrorState state);
+void HandleState();
 void CheckAllLockersAfterDelay(void);
 void CheckTemperature(void);
 void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi);

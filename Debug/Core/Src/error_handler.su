@@ -1,0 +1,5 @@
+error_handler.c:22:6:get_error_flag	4	static
+error_handler.c:25:6:get_locker_flag	4	static
+error_handler.c:29:6:setErrorState	16	static
+error_handler.c:34:6:HandleState	24	static
+error_handler.c:89:6:CheckAllLockersAfterDelay	32	static

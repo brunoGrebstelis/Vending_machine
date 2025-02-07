@@ -1,0 +1,41 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "d:/Users/bruno/STM32CubeIDE/workspace_1.6.0/Vending_machine/**",
+                "D:/ST/STM32CubeIDE_1.6.0/STM32CubeIDE/drivers/CMSIS/Include/**",
+                "D:/ST/STM32CubeIDE_1.6.0/STM32CubeIDE/drivers/CMSIS/Device/ST/STM32F7xx/Include/**",
+                "D:/ST/STM32CubeIDE_1.6.0/STM32CubeIDE/**",
+                "D:/Users/bruno/STM32CubeIDE/workspace_1.6.0/Vending_machine/Core/Src"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "compilerPathInCppPropertiesJson": "-mcpu=cortex-m7 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F767xx -c -I../Core/Inc -I../Drivers/STM32F7xx_HAL_Driver/Inc -I../Drivers/STM32F7xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F7xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb",
+            "mergeConfigurations": false,
+            "browse": {
+                "path": [
+                    "d:/Users/bruno/STM32CubeIDE/workspace_1.6.0/Vending_machine/**",
+                    "${workspaceFolder}"
+                ],
+                "limitSymbolsToIncludedHeaders": true
+            },
+            "cStandard": "gnu89"
+        },
+        {
+            "name": "1",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ]
+        }
+    ],
+    "version": 4
+}

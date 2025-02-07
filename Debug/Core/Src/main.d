@@ -29,7 +29,9 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_spi_ex.h \
  ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart.h \
  ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart_ex.h \
- ../Core/Inc/application.h ../Core/Inc/main.h
+ ../Core/Inc/application.h ../Core/Inc/main.h ../Core/Inc/aht20_sensor.h \
+ ../Core/Inc/print.h ../Core/Inc/spi_rpi.h ../Core/Inc/i2c_devices.h \
+ ../Core/Inc/locker.h ../Core/Inc/error_handler.h
 
 ../Core/Inc/main.h:
 
@@ -96,3 +98,15 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Core/Inc/application.h:
 
 ../Core/Inc/main.h:
+
+../Core/Inc/aht20_sensor.h:
+
+../Core/Inc/print.h:
+
+../Core/Inc/spi_rpi.h:
+
+../Core/Inc/i2c_devices.h:
+
+../Core/Inc/locker.h:
+
+../Core/Inc/error_handler.h:

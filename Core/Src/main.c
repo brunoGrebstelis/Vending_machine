@@ -56,9 +56,7 @@ UART_HandleTypeDef huart2;
 UART_HandleTypeDef huart3;
 
 /* USER CODE BEGIN PV */
-// SPI buffers remain here, as they are used directly in main and the callback
-uint8_t spi_rx_buffer[SPI_BUFFER_SIZE];
-uint8_t spi_tx_buffer[SPI_BUFFER_SIZE];
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -75,6 +73,7 @@ static void MX_USART2_UART_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+uint64_t lastTime = 0;
 /* USER CODE END 0 */
 
 /**
@@ -119,9 +118,9 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    if(error_flag) HandleState(errorState);
+    if(get_error_flag()) HandleState();
 
-    if(lockerFlag) CheckAllLockersAfterDelay();
+    if(get_locker_flag()) CheckAllLockersAfterDelay();
 
     if(HAL_GetTick() - lastTime >= 5000) {
       lastTime = HAL_GetTick();

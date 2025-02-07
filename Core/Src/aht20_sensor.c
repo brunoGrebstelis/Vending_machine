@@ -4,10 +4,54 @@
  *  Created on: Feb 6, 2025
  *      Author: bruno
  */
-#include "rht_sensor.h"
+#include "aht20_sensor.h"
 
 #define AHT20_ADDRESS (0x38 << 1) // Shifted left for STM32 HAL
 
+extern I2C_HandleTypeDef hi2c2;
+
+static bool tempSensFailed = false;
+static bool tempBelowZero = false;
+
+
+// Periodic temperature check
+void CheckTemperature(void) {
+
+//	for (int i =0; i<8; i++){
+//		AHT20_ReadData_PCA9548A(&hi2c2, PCA9548A_ADDRESS, sensors[i]);
+//	}
+    float temperature, humidity;
+    if (AHT20_ReadData_PCA9548A(&hi2c2, PCA9548A_ADDRESS, CHANNEL_2_MASK, &temperature, &humidity) == HAL_OK) {
+        printf("Temperature: %.2f C\r\n", temperature);
+        printf("Humidity: %.2f %%RH\r\n", humidity);
+
+        int16_t tRaw = (int16_t)(temperature * 100.0f);
+        int16_t hRaw = (int16_t)(humidity * 100.0f);
+        uint8_t tHigh = (uint8_t)((tRaw >> 8) & 0xFF);
+        uint8_t tLow  = (uint8_t)( tRaw       & 0xFF);
+        uint8_t hHigh = (uint8_t)((hRaw >> 8) & 0xFF);
+        uint8_t hLow  = (uint8_t)( hRaw       & 0xFF);
+        SPI_SendMessage(0xF4, 3, tHigh, tLow, hHigh, hLow);
+
+    } else {
+        printf("Failed to read data from AHT20 sensor.\r\n");
+        if (!tempSensFailed) {
+        	setErrorState(STATE_SENSOR);
+            error_locker = 3;
+            error_flag = true;
+            tempSensFailed = true;
+        }
+    }
+
+    if (temperature < 0.0 && !tempBelowZero) {
+        tempBelowZero = true;
+        setErrorState(STATE_TEMPERATURE);
+        error_locker = 3;
+        error_flag = true;
+    } else if (temperature >= 0.0) {
+        tempBelowZero = false;
+    }
+}
 
 // Read data from AHT20
 HAL_StatusTypeDef AHT20_ReadData(I2C_HandleTypeDef *hi2c, float *temperature, float *humidity) {
