@@ -16,16 +16,17 @@ void init_application(){
 
 void loop_application(){
 
-	if(getSPIFlag())Process_SPI_Command(spi_rx_buffer, SPI_BUFFER_SIZE);
-
-	if(get_error_flag()) HandleState();
-
-    if(get_locker_flag()) CheckAllLockersAfterDelay();
-
-    if(HAL_GetTick() - lastTime >= 5000) {
+	if(getSPIFlag()){
+		Process_SPI_Command(spi_rx_buffer, SPI_BUFFER_SIZE);
+	}else if(get_error_flag()){
+		HandleState();
+	}else if(get_locker_flag()){
+		CheckAllLockersAfterDelay();
+	}else if(!getSPIFlag() && HAL_GetTick() - lastTime >= 5000) {
       lastTime = HAL_GetTick();
       CheckTemperature();
     }
+
 }
 
 

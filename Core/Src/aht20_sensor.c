@@ -21,7 +21,7 @@ void CheckTemperature(void) {
 //		AHT20_ReadData_PCA9548A(&hi2c2, PCA9548A_ADDRESS, sensors[i]);
 //	}
     float temperature, humidity;
-    if (AHT20_ReadData_PCA9548A(&hi2c2, PCA9548A_ADDRESS, CHANNEL_2_MASK, &temperature, &humidity) == HAL_OK) {
+    if (AHT20_ReadData_PCA9548A(&hi2c2, PCA9548A_ADDRESS, CHANNEL_2, &temperature, &humidity) == HAL_OK) {
         printf("Temperature: %.2f C\r\n", temperature);
         printf("Humidity: %.2f %%RH\r\n", humidity);
 

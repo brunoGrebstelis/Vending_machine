@@ -24,7 +24,7 @@ bool getSPIFlag(){
 void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi) {
     if (hspi->Instance == SPI1) {
         //Process_SPI_Command(spi_rx_buffer, SPI_BUFFER_SIZE);
-        HAL_SPI_Receive_IT(&hspi1, spi_rx_buffer, SPI_BUFFER_SIZE);
+        //HAL_SPI_Receive_IT(&hspi1, spi_rx_buffer, SPI_BUFFER_SIZE);
         spi_flag = true;
     }
 }
@@ -50,7 +50,7 @@ void Process_SPI_Command(uint8_t *data, uint16_t size) {
         red = data[2];
         green = data[3];
         blue = data[4];
-        mode = data[5];  // single space around '='
+        mode = data[5];
 
         if(locker_id == 255) {
             printf("Set all LED to Color: R=%d, G=%d, B=%d\r\n", red, green, blue);
@@ -83,6 +83,7 @@ void Process_SPI_Command(uint8_t *data, uint16_t size) {
     if (data[0] == 0xFF) {
         HAL_SPI_Transmit(&hspi1, spi_tx_buffer, SPI_BUFFER_SIZE, 100);
     }
+    HAL_SPI_Receive_IT(&hspi1, spi_rx_buffer, SPI_BUFFER_SIZE);
 }
 
 // Send a message over SPI to the master
@@ -98,4 +99,5 @@ void SPI_SendMessage(uint8_t command, uint8_t locker_id, uint8_t data1, uint8_t 
     HAL_GPIO_WritePin(GPIOG, GPIO_PIN_10, GPIO_PIN_SET);
     HAL_Delay(100);
     HAL_GPIO_WritePin(GPIOG, GPIO_PIN_10, GPIO_PIN_RESET);
+    Process_SPI_Command(spi_rx_buffer, SPI_BUFFER_SIZE);
 }
