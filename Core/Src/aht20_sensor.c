@@ -32,6 +32,7 @@ void CheckTemperature(void) {
         uint8_t hHigh = (uint8_t)((hRaw >> 8) & 0xFF);
         uint8_t hLow  = (uint8_t)( hRaw       & 0xFF);
         SPI_SendMessage(0xF4, 3, tHigh, tLow, hHigh, hLow);
+        tempSensFailed = false;
 
     } else {
         printf("Failed to read data from AHT20 sensor.\r\n");

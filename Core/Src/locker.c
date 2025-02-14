@@ -123,6 +123,9 @@ int read_cabinet_status(uint8_t locker_id) {
         }
     } else {
         printf("No response received when reading the cabinet status.\n");
+        //setErrorState(STATE_JAMMED);
+        //error_locker = locker_id;
+        //error_flag = true;
         return -1;
     }
 }
