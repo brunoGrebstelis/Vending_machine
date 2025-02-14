@@ -9,8 +9,10 @@
 
 uint8_t spi_rx_buffer[SPI_BUFFER_SIZE];
 uint8_t spi_tx_buffer[SPI_BUFFER_SIZE];
+uint8_t rpi_msg[SPI_BUFFER_SIZE];
 
 static bool spi_flag = false;
+static bool send_spi_flag = true;
 
 extern SPI_HandleTypeDef hspi1;
 
@@ -18,21 +20,31 @@ extern SPI_HandleTypeDef hspi1;
 bool getSPIFlag(){
 	return spi_flag;
 }
+bool getSendSPIFlag(){
+	return send_spi_flag;
+}
 
 
 // SPI receive complete callback
-void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi) {
+void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi) {
     if (hspi->Instance == SPI1) {
-        //Process_SPI_Command(spi_rx_buffer, SPI_BUFFER_SIZE);
-        //HAL_SPI_Receive_IT(&hspi1, spi_rx_buffer, SPI_BUFFER_SIZE);
-        spi_flag = true;
+
+    	send_spi_flag = false;
+    	if(spi_rx_buffer[0] != 0xFF){
+    		spi_flag = true;
+    		memcpy(rpi_msg, spi_rx_buffer, SPI_BUFFER_SIZE);
+    	}
+        HAL_SPI_TransmitReceive_IT(&hspi1, spi_tx_buffer, spi_rx_buffer, SPI_BUFFER_SIZE);
+
+
     }
 }
 
 
+
+
 // Function to handle received SPI data
 void Process_SPI_Command(uint8_t *data, uint16_t size) {
-	spi_flag = false;
 	uint8_t red = 255;
 	uint8_t green = 255;
 	uint8_t blue = 255;
@@ -79,15 +91,21 @@ void Process_SPI_Command(uint8_t *data, uint16_t size) {
         Send_RGB(locker_id + 100, 0, 0, 0, 0);
     }
 
-    // Example: Echo command (0xFF)
-    if (data[0] == 0xFF) {
-        HAL_SPI_Transmit(&hspi1, spi_tx_buffer, SPI_BUFFER_SIZE, 100);
+    if (data[0] == 0x00) {
+        for (int i = 0; i < size; i++) {
+            spi_tx_buffer[i] = 0x00;
+        }
     }
-    HAL_SPI_Receive_IT(&hspi1, spi_rx_buffer, SPI_BUFFER_SIZE);
+    send_spi_flag = true;
+    spi_flag = false;
+    printf("DONE\r\n");
+
 }
 
 // Send a message over SPI to the master
 void SPI_SendMessage(uint8_t command, uint8_t locker_id, uint8_t data1, uint8_t data2, uint8_t data3, uint8_t data4) {
+	printf("1\r\n");
+	send_spi_flag = false;
     spi_tx_buffer[0] = command;
     spi_tx_buffer[1] = locker_id;
     spi_tx_buffer[2] = data1;
@@ -95,9 +113,6 @@ void SPI_SendMessage(uint8_t command, uint8_t locker_id, uint8_t data1, uint8_t 
     spi_tx_buffer[4] = data3;
     spi_tx_buffer[5] = data4;
 
-    // Trigger the interrupt pin (PG10) to signal the Raspberry Pi
-    HAL_GPIO_WritePin(GPIOG, GPIO_PIN_10, GPIO_PIN_SET);
-    HAL_Delay(100);
-    HAL_GPIO_WritePin(GPIOG, GPIO_PIN_10, GPIO_PIN_RESET);
-    Process_SPI_Command(spi_rx_buffer, SPI_BUFFER_SIZE);
+    HAL_GPIO_TogglePin(GPIOG, GPIO_PIN_10);
+
 }

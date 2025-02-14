@@ -12,6 +12,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include "spi_rpi.h"
+#include "main.h"
 
 
 #define LOCKER_CHECK_DELAY 60000  // e.g. 5 minutes in ms
