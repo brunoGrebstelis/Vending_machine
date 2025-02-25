@@ -23,9 +23,9 @@ void loop_application(){
 	} else {
 		if(getSendSPIFlag() && get_error_flag()) HandleState();
 		if(getSendSPIFlag() && get_locker_flag()) CheckAllLockersAfterDelay();
-		if(getSendSPIFlag() && HAL_GetTick() - lastTime >= 5000) {
+		if(getSendSPIFlag() && HAL_GetTick() - lastTime >= 5000) { //3000000
 			lastTime = HAL_GetTick();
-			  CheckTemperature();
+			  CheckTemperature(SENSOR_AHT20_1);
 		}
 	}
 

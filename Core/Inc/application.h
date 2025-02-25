@@ -19,6 +19,8 @@
 #include <stdio.h>
 #include <string.h>
 
+
+
 void init_application();
 void loop_application();
 

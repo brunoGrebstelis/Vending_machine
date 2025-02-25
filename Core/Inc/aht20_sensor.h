@@ -26,9 +26,18 @@
 #define CHANNEL_6 0x40
 #define CHANNEL_7 0x80
 
+typedef enum {
+    SENSOR_AHT20_1 = 1,
+    SENSOR_AHT20_2,
+    SENSOR_AHT20_3,
+    SENSOR_AHT20_4,
+    SENSOR_AHT20_5,
+    SENSOR_AHT20_6,
+    SENSOR_AHT20_7,
+    SENSOR_AHT20_8
+} AHT20_Sensor_t;
 
-
-void CheckTemperature(void);
+void CheckTemperature(AHT20_Sensor_t sensor);
 void AHT20_CalculateValues(uint8_t *data, float *temperature, float *humidity);
 HAL_StatusTypeDef AHT20_ReadData(I2C_HandleTypeDef *hi2c, float *temperature, float *humidity);
 HAL_StatusTypeDef AHT20_ReadData_PCA9548A(I2C_HandleTypeDef *hi2c, uint8_t pca9548a_address, uint8_t channel, float *temperature, float *humidity) ;

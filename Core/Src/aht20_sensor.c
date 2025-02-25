@@ -15,15 +15,20 @@ static bool tempBelowZero = false;
 
 
 // Periodic temperature check
-void CheckTemperature(void) {
+void CheckTemperature(AHT20_Sensor_t sensor) {
+    if (sensor < SENSOR_AHT20_1 || sensor > SENSOR_AHT20_8) {
+        printf("Invalid sensor: %d. Must be between SENSOR_AHT20_1 and SENSOR_AHT20_8.\r\n", sensor);
+        return;
+    }
 
-//	for (int i =0; i<8; i++){
-//		AHT20_ReadData_PCA9548A(&hi2c2, PCA9548A_ADDRESS, sensors[i]);
-//	}
+    // Mapping sensor to PCA9548A channel bitmask
+    uint8_t channelMasks[] = {CHANNEL_0, CHANNEL_1, CHANNEL_2, CHANNEL_3, CHANNEL_4, CHANNEL_5, CHANNEL_6, CHANNEL_7};
+    uint8_t selectedChannel = channelMasks[sensor - 1];  // Adjust for 0-based indexing
+
     float temperature, humidity;
-    if (AHT20_ReadData_PCA9548A(&hi2c2, PCA9548A_ADDRESS, CHANNEL_2, &temperature, &humidity) == HAL_OK) {
-        printf("Temperature: %.2f C\r\n", temperature);
-        printf("Humidity: %.2f %%RH\r\n", humidity);
+    if (AHT20_ReadData_PCA9548A(&hi2c2, PCA9548A_ADDRESS, selectedChannel, &temperature, &humidity) == HAL_OK) {
+        printf("Sensor %d - Temperature: %.2f C\r\n", sensor, temperature);
+        printf("Sensor %d - Humidity: %.2f %%RH\r\n", sensor, humidity);
 
         int16_t tRaw = (int16_t)(temperature * 100.0f);
         int16_t hRaw = (int16_t)(humidity * 100.0f);
@@ -31,14 +36,14 @@ void CheckTemperature(void) {
         uint8_t tLow  = (uint8_t)( tRaw       & 0xFF);
         uint8_t hHigh = (uint8_t)((hRaw >> 8) & 0xFF);
         uint8_t hLow  = (uint8_t)( hRaw       & 0xFF);
-        SPI_SendMessage(0xF4, 3, tHigh, tLow, hHigh, hLow);
+        SPI_SendMessage(0xF4, sensor, tHigh, tLow, hHigh, hLow);
         tempSensFailed = false;
 
     } else {
-        printf("Failed to read data from AHT20 sensor.\r\n");
+        printf("Failed to read data from sensor %d.\r\n", sensor);
         if (!tempSensFailed) {
-        	setErrorState(STATE_SENSOR);
-            error_locker = 3;
+            setErrorState(STATE_SENSOR);
+            error_locker = sensor;
             error_flag = true;
             tempSensFailed = true;
         }
@@ -47,12 +52,14 @@ void CheckTemperature(void) {
     if (temperature < 0.0 && !tempBelowZero) {
         tempBelowZero = true;
         setErrorState(STATE_TEMPERATURE);
-        error_locker = 3;
+        error_locker = sensor;
         error_flag = true;
     } else if (temperature >= 0.0) {
         tempBelowZero = false;
     }
 }
+
+
 
 // Read data from AHT20
 HAL_StatusTypeDef AHT20_ReadData(I2C_HandleTypeDef *hi2c, float *temperature, float *humidity) {
