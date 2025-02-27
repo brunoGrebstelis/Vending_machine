@@ -1,5 +1,6 @@
 "Core/Src/aht20_sensor.o"
 "Core/Src/application.o"
+"Core/Src/climate.o"
 "Core/Src/error_handler.o"
 "Core/Src/i2c_devices.o"
 "Core/Src/locker.o"

@@ -7,12 +7,15 @@
 
 #include "application.h"
 
-uint64_t lastTime = 0;
+static uint64_t lastTime1 = 0;
+static uint64_t lastTime2 = 0;
+static int sensorIndex = 0;
 
 void init_application(){
 	printf("STM32 SPI Slave Ready\r\n"); // Print ready message
 	//HAL_SPI_Receive_IT(&hspi1, spi_rx_buffer, SPI_BUFFER_SIZE);
 	HAL_SPI_TransmitReceive_IT(&hspi1, spi_tx_buffer, spi_rx_buffer, SPI_BUFFER_SIZE);
+	setFanMode();
 
 }
 
@@ -23,9 +26,28 @@ void loop_application(){
 	} else {
 		if(getSendSPIFlag() && get_error_flag()) HandleState();
 		if(getSendSPIFlag() && get_locker_flag()) CheckAllLockersAfterDelay();
-		if(getSendSPIFlag() && HAL_GetTick() - lastTime >= 5000) { //3000000
-			lastTime = HAL_GetTick();
-			  CheckTemperature(SENSOR_AHT20_1);
+		if(getClimateFlag()) setFanMode();
+		if(HAL_GetTick() - lastTime1 >= 5000 && getAutoFlag()) {
+			lastTime1 = HAL_GetTick();
+			//ControlClimate();
+		}
+		if (getSendSPIFlag() && HAL_GetTick() - lastTime2 >= 60000) {
+		    lastTime2 = HAL_GetTick();
+		    switch (sensorIndex) {
+		        case 0:
+		            CheckTemperature(SENSOR_AHT20_1);
+		            CheckTemperature(SENSOR_AHT20_2);
+		            break;
+		        case 1:
+		        	CheckTemperature(SENSOR_AHT20_1);
+		            CheckTemperature(SENSOR_AHT20_3);
+		            break;
+		        case 2:
+		        	CheckTemperature(SENSOR_AHT20_1);
+		            CheckTemperature(SENSOR_AHT20_4);
+		            break;
+		    }
+		    sensorIndex = (sensorIndex + 1) % 3;
 		}
 	}
 

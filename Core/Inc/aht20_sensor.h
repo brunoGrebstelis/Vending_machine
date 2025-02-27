@@ -15,6 +15,7 @@
 #include "main.h"
 #include <stdbool.h>
 #include "error_handler.h"
+#include "climate.h"
 
 #define PCA9548A_ADDRESS 0x70
 #define CHANNEL_0 0x01

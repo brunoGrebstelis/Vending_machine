@@ -13,6 +13,7 @@
 #include "error_handler.h"
 #include "print.h"
 #include "spi_rpi.h"
+#include "climate.h"
 
 #include <stdbool.h>
 #include <stdint.h>

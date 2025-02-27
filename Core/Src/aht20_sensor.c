@@ -10,8 +10,8 @@
 
 extern I2C_HandleTypeDef hi2c2;
 
-static bool tempSensFailed = false;
-static bool tempBelowZero = false;
+static bool tempSensFailed[4] = {false, false, false, false};
+static bool tempBelowZero[4] = {false, false, false, false};
 
 
 // Periodic temperature check
@@ -37,26 +37,61 @@ void CheckTemperature(AHT20_Sensor_t sensor) {
         uint8_t hHigh = (uint8_t)((hRaw >> 8) & 0xFF);
         uint8_t hLow  = (uint8_t)( hRaw       & 0xFF);
         SPI_SendMessage(0xF4, sensor, tHigh, tLow, hHigh, hLow);
-        tempSensFailed = false;
+        tempSensFailed[sensor - 1] = false;
+
+        switch (sensor) {
+            case SENSOR_AHT20_1: // Chamber 1
+                if (temperature < TEMP_MIN) {
+                    HAL_GPIO_WritePin(GPIOG, GPIO_PIN_5, GPIO_PIN_SET);   // Heater ON
+                } else if (temperature > TEMP_MAX) {
+                    HAL_GPIO_WritePin(GPIOG, GPIO_PIN_5, GPIO_PIN_RESET); // Heater OFF
+                }
+                // (If within [TEMP_MIN, TEMP_MAX], do nothing => keep previous state
+                //  or explicitly turn OFF if you want that behavior)
+                break;
+
+            case SENSOR_AHT20_2: // Chamber 2
+                if (temperature < TEMP_MIN) {
+                    HAL_GPIO_WritePin(GPIOG, GPIO_PIN_6, GPIO_PIN_SET);   // Heater ON
+                } else if (temperature > TEMP_MAX) {
+                    HAL_GPIO_WritePin(GPIOG, GPIO_PIN_6, GPIO_PIN_RESET); // Heater OFF
+                }
+                break;
+
+            case SENSOR_AHT20_3: // Chamber 3
+                if (temperature < TEMP_MIN) {
+                    HAL_GPIO_WritePin(GPIOG, GPIO_PIN_7, GPIO_PIN_SET);   // Heater ON
+                } else if (temperature > TEMP_MAX) {
+                    HAL_GPIO_WritePin(GPIOG, GPIO_PIN_7, GPIO_PIN_RESET); // Heater OFF
+                }
+                break;
+
+            // For sensors that represent "outside" or other locations with no heater,
+            // do nothing:
+            default:
+                break;
+        }
 
     } else {
         printf("Failed to read data from sensor %d.\r\n", sensor);
-        if (!tempSensFailed) {
+        if (!tempSensFailed[sensor - 1]) {
             setErrorState(STATE_SENSOR);
             error_locker = sensor;
             error_flag = true;
-            tempSensFailed = true;
+            tempSensFailed[sensor - 1] = true;
         }
     }
 
-    if (temperature < 0.0 && !tempBelowZero) {
-        tempBelowZero = true;
+    if (temperature < 0.0 && !tempBelowZero[sensor - 1]) {
+        tempBelowZero[sensor - 1] = true;
         setErrorState(STATE_TEMPERATURE);
         error_locker = sensor;
         error_flag = true;
     } else if (temperature >= 0.0) {
-        tempBelowZero = false;
+        tempBelowZero[sensor - 1] = false;
     }
+
+
 }
 
 

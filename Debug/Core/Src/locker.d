@@ -31,7 +31,8 @@ Core/Src/locker.o: ../Core/Src/locker.c ../Core/Inc/locker.h \
  ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart.h \
  ../Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_hal_uart_ex.h \
  ../Core/Inc/error_handler.h ../Core/Inc/spi_rpi.h \
- ../Core/Inc/i2c_devices.h ../Core/Inc/locker.h
+ ../Core/Inc/i2c_devices.h ../Core/Inc/locker.h ../Core/Inc/climate.h \
+ ../Core/Inc/aht20_sensor.h
 
 ../Core/Inc/locker.h:
 
@@ -106,3 +107,7 @@ Core/Src/locker.o: ../Core/Src/locker.c ../Core/Inc/locker.h \
 ../Core/Inc/i2c_devices.h:
 
 ../Core/Inc/locker.h:
+
+../Core/Inc/climate.h:
+
+../Core/Inc/aht20_sensor.h:

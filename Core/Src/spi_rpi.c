@@ -91,6 +91,14 @@ void Process_SPI_Command(uint8_t *data, uint16_t size) {
         Send_RGB(locker_id + 100, 0, 0, 0, 0);
     }
 
+    if (data[0] == 0x04) {
+        uint8_t mode = data[1];
+        printf("Mode: %d\r\n", mode);
+        setClimateFlag(true);
+        fanMode = data[1];
+
+    }
+
     if (data[0] == 0x00) {
         for (int i = 0; i < size; i++) {
             spi_tx_buffer[i] = 0x00;
@@ -98,7 +106,7 @@ void Process_SPI_Command(uint8_t *data, uint16_t size) {
     }
     send_spi_flag = true;
     spi_flag = false;
-    printf("DONE\r\n");
+
 
 }
 

@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
+#include "climate.h"
 
 #define SPI_BUFFER_SIZE 6
 
