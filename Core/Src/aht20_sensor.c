@@ -10,8 +10,8 @@
 
 extern I2C_HandleTypeDef hi2c2;
 
-static bool tempSensFailed[4] = {false, false, false, false};
-static bool tempBelowZero[4] = {false, false, false, false};
+static bool tempSensFailed[5] = {false, false, false, false, false};
+static bool tempBelowZero[5] = {false, false, false, false, false};
 
 
 // Periodic temperature check
@@ -65,9 +65,6 @@ void CheckTemperature(AHT20_Sensor_t sensor) {
                     HAL_GPIO_WritePin(GPIOG, GPIO_PIN_7, GPIO_PIN_RESET); // Heater OFF
                 }
                 break;
-
-            // For sensors that represent "outside" or other locations with no heater,
-            // do nothing:
             default:
                 break;
         }

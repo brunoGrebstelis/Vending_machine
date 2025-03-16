@@ -21,12 +21,14 @@ void init_application(){
 
 void loop_application(){
 
+
 	if(getSPIFlag()){
 		Process_SPI_Command(rpi_msg, SPI_BUFFER_SIZE);
 	} else {
 		if(getSendSPIFlag() && get_error_flag()) HandleState();
 		if(getSendSPIFlag() && get_locker_flag()) CheckAllLockersAfterDelay();
 		if(getClimateFlag()) setFanMode();
+		/*
 		if(HAL_GetTick() - lastTime1 >= 5000 && getAutoFlag()) {
 			lastTime1 = HAL_GetTick();
 			//ControlClimate();
@@ -46,9 +48,14 @@ void loop_application(){
 		        	CheckTemperature(SENSOR_AHT20_1);
 		            CheckTemperature(SENSOR_AHT20_4);
 		            break;
+		        case 3:
+		        	CheckTemperature(SENSOR_AHT20_1);
+		            CheckTemperature(SENSOR_AHT20_5);
+		            break;
 		    }
-		    sensorIndex = (sensorIndex + 1) % 3;
+		    sensorIndex = (sensorIndex + 1) % 4;
 		}
+		*/
 	}
 
 }
