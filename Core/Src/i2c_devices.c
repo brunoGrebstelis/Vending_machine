@@ -26,11 +26,13 @@ void Send_RGB(uint16_t address, uint8_t red, uint8_t green, uint8_t blue, uint8_
     RGB_Buffer[3] = mode;
 
     // Transmit RGB values to the slave
-    if (HAL_I2C_Master_Transmit(&hi2c1, (address << 1), RGB_Buffer, 4, HAL_MAX_DELAY) != HAL_OK) {
+    //if (HAL_I2C_Master_Transmit(&hi2c1, (address << 1), RGB_Buffer, 4, HAL_MAX_DELAY) != HAL_OK) {
+    if (HAL_I2C_Master_Transmit_DMA(&hi2c1, (address << 1), RGB_Buffer, 4) != HAL_OK) {
         //setErrorState(STATE_LED_DRIVER);
         //error_locker = address - 100;
         //error_flag = true;
     }
+    HAL_Delay(1);
 }
 
 // Send price values to the slave
@@ -40,9 +42,12 @@ void Send_Price(uint16_t address, uint8_t byte1, uint8_t byte2) {
     Price_Buffer[1] = byte2;
 
     // Transmit price values to the slave
-    if (HAL_I2C_Master_Transmit(&hi2c1, (address << 1), Price_Buffer, 2, HAL_MAX_DELAY) != HAL_OK) {
+    //if (HAL_I2C_Master_Transmit(&hi2c1, (address << 1), Price_Buffer, 2, HAL_MAX_DELAY) != HAL_OK) {
+    if (HAL_I2C_Master_Transmit_DMA(&hi2c1, address << 1, Price_Buffer, 2) != HAL_OK) {
         //setErrorState(STATE_PRICE_TAG);
         //error_locker = address;
         //error_flag = true;
     }
+    HAL_Delay(1);
+
 }

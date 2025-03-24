@@ -50,11 +50,11 @@ void Process_SPI_Command(uint8_t *data, uint16_t size) {
 	uint8_t blue = 255;
 	uint8_t mode = 0xFF;
 
-    printf("SPI Data Received: ");
-    for (uint16_t i = 0; i < size; i++) {
-        printf("0x%02X ", data[i]);
-    }
-    printf("\r\n");
+    //printf("SPI Data Received: ");
+    //for (uint16_t i = 0; i < size; i++) {
+        //printf("0x%02X ", data[i]);
+    //}
+    //printf("\r\n");
 
     // Example: Handle LED color command (0x01)
     if (data[0] == 0x01) {
@@ -65,35 +65,37 @@ void Process_SPI_Command(uint8_t *data, uint16_t size) {
         mode = data[5];
 
         if(locker_id == 255) {
-            printf("Set all LED to Color: R=%d, G=%d, B=%d\r\n", red, green, blue);
+        	//HAL_Delay(1);
+            //printf("Set all LED to Color: R=%d, G=%d, B=%d\r\n", red, green, blue);
             for(int i = 1; i <= 14; i++) {
                 Send_RGB(i + 100, red, green, blue, mode);
+                //HAL_Delay(1);
             }
         } else {
             Send_RGB(locker_id + 100, red, green, blue, mode);
-            printf("Set LED Color: Locker %d, R=%d, G=%d, B=%d\r\n", locker_id, red, green, blue);
+            //printf("Set LED Color: Locker %d, R=%d, G=%d, B=%d\r\n", locker_id, red, green, blue);
         }
     }
 
     // Example: Handle price command (0x02)
     if (data[0] == 0x02) {
         uint8_t locker_id = data[1];
-        uint16_t price = (data[2] << 8) | data[3];
-        printf("Set Price: Locker %d, Price=%d euro\r\n", locker_id, price);
+        //uint16_t price = (data[2] << 8) | data[3];
+        //printf("Set Price: Locker %d, Price=%d euro\r\n", locker_id, price);
         Send_Price(locker_id, data[2], data[3]);
     }
 
     // Example: Handle unlock command (0x03)
     if (data[0] == 0x03) {
         uint8_t locker_id = data[1];
-        printf("Unlock: Locker %d\r\n", locker_id);
+        //printf("Unlock: Locker %d\r\n", locker_id);
         open_cabinet(locker_id);
         Send_RGB(locker_id + 100, 0, 0, 0, 0);
     }
 
     if (data[0] == 0x04) {
-        uint8_t mode = data[1];
-        printf("Mode: %d\r\n", mode);
+        //uint8_t mode = data[1];
+        //printf("Mode: %d\r\n", mode);
         setClimateFlag(true);
         fanMode = data[1];
 
@@ -112,7 +114,7 @@ void Process_SPI_Command(uint8_t *data, uint16_t size) {
 
 // Send a message over SPI to the master
 void SPI_SendMessage(uint8_t command, uint8_t locker_id, uint8_t data1, uint8_t data2, uint8_t data3, uint8_t data4) {
-	printf("1\r\n");
+	//printf("1\r\n");
 	send_spi_flag = false;
     spi_tx_buffer[0] = command;
     spi_tx_buffer[1] = locker_id;
