@@ -7,15 +7,33 @@
 
 #include "application.h"
 
-static uint64_t lastTime1 = 0;
-static uint64_t lastTime2 = 0;
-static int sensorIndex = 0;
+//static uint64_t lastTime1 = 0;
+//static uint64_t lastTime2 = 0;
+//static int sensorIndex = 0;
 
 void init_application(){
 	printf("STM32 SPI Slave Ready\r\n"); // Print ready message
 	//HAL_SPI_Receive_IT(&hspi1, spi_rx_buffer, SPI_BUFFER_SIZE);
 	HAL_SPI_TransmitReceive_IT(&hspi1, spi_tx_buffer, spi_rx_buffer, SPI_BUFFER_SIZE);
-	setFanMode();
+	//setFanMode();
+
+	uint8_t red = 255;
+	uint8_t green = 255;
+	uint8_t blue = 255;
+	uint8_t mode = 0xFF;
+
+	//CheckTemperature(SENSOR_AHT20_6);
+
+
+
+    for(int i = 1; i <= 14; i++) {
+    	Send_Price(i, 0x00, 0x0A);
+
+        //Send_RGB(i + 100, red, green, blue, mode);
+        open_cabinet(i);
+
+    }
+
 
 }
 

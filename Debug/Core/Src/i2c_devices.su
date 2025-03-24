@@ -1,3 +1,4 @@
 i2c_devices.c:14:6:I2C_Master_Send_Byte	24	static
 i2c_devices.c:21:6:Send_RGB	32	static
 i2c_devices.c:39:6:Send_Price	24	static
+i2c_devices.c:55:6:HAL_I2C_MasterTxCpltCallback	16	static

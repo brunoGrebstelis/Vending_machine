@@ -15,6 +15,9 @@
 #include "spi_rpi.h"
 #include "climate.h"
 
+#include "i2c_devices.h"
+#include "locker.h"
+
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>

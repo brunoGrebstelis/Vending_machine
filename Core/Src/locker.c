@@ -21,7 +21,7 @@ void open_cabinet(uint8_t locker_id) {
         return;
     }
 
-    // Check the cabinet status first
+    // Check if the locker is already open
     int status = read_cabinet_status(locker_id);
     if (status == 1) {
         printf("Locker %d is already open. No action required.\n", locker_id);
@@ -31,23 +31,18 @@ void open_cabinet(uint8_t locker_id) {
         uint8_t response[5];
 
         // Build the command to open the cabinet
-        command[0] = 0x8A;
-        command[1] = 0x01;
-        command[2] = locker_id;
-        command[3] = 0x11;
+        command[0] = 0x8A;  // Command header for opening
+        command[1] = 0x01;  // Addressing mode
+        command[2] = locker_id;  // Locker ID
+        command[3] = 0x11;  // Open command
         command[4] = calculate_checksum(command[0], command[1], command[2], command[3]);
 
-        // Transmit the command
+        // Transmit the open command
         RS485_Transmit(command, sizeof(command));
+        HAL_Delay(2000);
 
         // Wait for the response
         if (HAL_UART_Receive(&huart2, response, sizeof(response), 1000) == HAL_OK) {
-            printf("Response received: ");
-            for (int i = 0; i < sizeof(response); i++) {
-                printf("0x%02X ", response[i]);
-            }
-            printf("\n");
-
             uint8_t expected_checksum = calculate_checksum(response[0], response[1], response[2], response[3]);
             if (response[4] != expected_checksum) {
                 printf("Response checksum error.\n");
@@ -56,15 +51,9 @@ void open_cabinet(uint8_t locker_id) {
 
             if (response[3] == 0x11) {
                 printf("Locker %d opened successfully.\n", locker_id);
-                lockerOpened[locker_id - 1] = true;
-                openTimestamp[locker_id - 1] = HAL_GetTick();
-                checkPending[locker_id - 1] = true;
-                lockerFlag = true;
+
             } else {
                 printf("Unexpected response when opening locker %d.\n", locker_id);
-                setErrorState(STATE_JAMMED);
-                error_locker = locker_id;
-                error_flag = true;
             }
         } else {
             printf("No response received when opening the cabinet.\n");
@@ -73,6 +62,11 @@ void open_cabinet(uint8_t locker_id) {
         printf("Failed to determine the status of locker %d. Aborting open operation.\n", locker_id);
     }
 }
+
+
+
+
+
 
 // Function to read the cabinet status
 int read_cabinet_status(uint8_t locker_id) {

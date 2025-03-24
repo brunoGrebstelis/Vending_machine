@@ -32,7 +32,7 @@ void Send_RGB(uint16_t address, uint8_t red, uint8_t green, uint8_t blue, uint8_
         //error_locker = address - 100;
         //error_flag = true;
     }
-    HAL_Delay(1);
+    //HAL_Delay(1);
 }
 
 // Send price values to the slave
@@ -48,6 +48,12 @@ void Send_Price(uint16_t address, uint8_t byte1, uint8_t byte2) {
         //error_locker = address;
         //error_flag = true;
     }
-    HAL_Delay(1);
+    //HAL_Delay(1);
 
+}
+
+void HAL_I2C_MasterTxCpltCallback(I2C_HandleTypeDef *hi2c) {
+	if(hi2c->Instance == I2C1){
+    	//printf("SUCCESS\r\n");
+    }
 }
