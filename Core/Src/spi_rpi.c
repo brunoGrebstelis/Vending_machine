@@ -50,11 +50,11 @@ void Process_SPI_Command(uint8_t *data, uint16_t size) {
 	uint8_t blue = 255;
 	uint8_t mode = 0xFF;
 
-    //printf("SPI Data Received: ");
-    //for (uint16_t i = 0; i < size; i++) {
-        //printf("0x%02X ", data[i]);
-    //}
-    //printf("\r\n");
+    printf("SPI Data Received: ");
+    for (uint16_t i = 0; i < size; i++) {
+        printf("0x%02X ", data[i]);
+    }
+    printf("\r\n");
 
     // Example: Handle LED color command (0x01)
     if (data[0] == 0x01) {
@@ -66,38 +66,47 @@ void Process_SPI_Command(uint8_t *data, uint16_t size) {
 
         if(locker_id == 255) {
         	//HAL_Delay(1);
-            //printf("Set all LED to Color: R=%d, G=%d, B=%d\r\n", red, green, blue);
+            printf("Set all LED to Color: R=%d, G=%d, B=%d\r\n", red, green, blue);
             for(int i = 1; i <= 14; i++) {
+            	HAL_Delay(1);
                 Send_RGB(i + 100, red, green, blue, mode);
-                //HAL_Delay(1);
+                //HAL_Delay(10);
+
             }
         } else {
             Send_RGB(locker_id + 100, red, green, blue, mode);
-            //printf("Set LED Color: Locker %d, R=%d, G=%d, B=%d\r\n", locker_id, red, green, blue);
+            printf("Set LED Color: Locker %d, R=%d, G=%d, B=%d\r\n", locker_id, red, green, blue);
         }
     }
 
     // Example: Handle price command (0x02)
     if (data[0] == 0x02) {
-        uint8_t locker_id = data[1];
-        //uint16_t price = (data[2] << 8) | data[3];
-        //printf("Set Price: Locker %d, Price=%d euro\r\n", locker_id, price);
-        Send_Price(locker_id, data[2], data[3]);
+        uint8_t  locker_id = data[1];
+        uint16_t price     = (data[2] << 8) | data[3];
+        printf("Set Price: Locker %d, Price = %d EUR\r\n", locker_id, price);
+        /* Zero is a special case: send 10 first, then 0                       *
+         * 10 = 0x000A  → high-byte 0, low-byte 10 (decimal)                   */
+        if (price == 0) {
+            Send_Price(locker_id, 0x00, 0x0A);       // send 10
+            HAL_Delay(10);
+            Send_Price(locker_id, 0x00, 0x00);       // now send 0
+        } else { Send_Price(locker_id, data[2], data[3]); }
     }
 
     // Example: Handle unlock command (0x03)
     if (data[0] == 0x03) {
         uint8_t locker_id = data[1];
-        //printf("Unlock: Locker %d\r\n", locker_id);
-        open_cabinet(locker_id);
+        printf("Unlock: Locker %d\r\n", locker_id);
         Send_RGB(locker_id + 100, 0, 0, 0, 0);
+        open_cabinet(locker_id);
+
     }
 
     if (data[0] == 0x04) {
-        //uint8_t mode = data[1];
-        //printf("Mode: %d\r\n", mode);
+    	fanMode = data[1];
+        printf("Mode: %d\r\n", fanMode);
         setClimateFlag(true);
-        fanMode = data[1];
+
 
     }
 

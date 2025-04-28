@@ -13,6 +13,9 @@ extern I2C_HandleTypeDef hi2c2;
 static bool tempSensFailed[5] = {false, false, false, false, false};
 static bool tempBelowZero[5] = {false, false, false, false, false};
 
+static const uint16_t fanPins[3]  = { GPIO_PIN_2, GPIO_PIN_3, GPIO_PIN_4 };
+static const uint16_t heatPins[3] = { GPIO_PIN_5, GPIO_PIN_6, GPIO_PIN_7 };
+
 
 // Periodic temperature check
 void CheckTemperature(AHT20_Sensor_t sensor) {
@@ -39,35 +42,7 @@ void CheckTemperature(AHT20_Sensor_t sensor) {
         SPI_SendMessage(0xF4, sensor, tHigh, tLow, hHigh, hLow);
         tempSensFailed[sensor - 1] = false;
 
-        switch (sensor) {
-            case SENSOR_AHT20_1: // Chamber 1
-                if (temperature < TEMP_MIN) {
-                    HAL_GPIO_WritePin(GPIOG, GPIO_PIN_5, GPIO_PIN_SET);   // Heater ON
-                } else if (temperature > TEMP_MAX) {
-                    HAL_GPIO_WritePin(GPIOG, GPIO_PIN_5, GPIO_PIN_RESET); // Heater OFF
-                }
-                // (If within [TEMP_MIN, TEMP_MAX], do nothing => keep previous state
-                //  or explicitly turn OFF if you want that behavior)
-                break;
-
-            case SENSOR_AHT20_2: // Chamber 2
-                if (temperature < TEMP_MIN) {
-                    HAL_GPIO_WritePin(GPIOG, GPIO_PIN_6, GPIO_PIN_SET);   // Heater ON
-                } else if (temperature > TEMP_MAX) {
-                    HAL_GPIO_WritePin(GPIOG, GPIO_PIN_6, GPIO_PIN_RESET); // Heater OFF
-                }
-                break;
-
-            case SENSOR_AHT20_3: // Chamber 3
-                if (temperature < TEMP_MIN) {
-                    HAL_GPIO_WritePin(GPIOG, GPIO_PIN_7, GPIO_PIN_SET);   // Heater ON
-                } else if (temperature > TEMP_MAX) {
-                    HAL_GPIO_WritePin(GPIOG, GPIO_PIN_7, GPIO_PIN_RESET); // Heater OFF
-                }
-                break;
-            default:
-                break;
-        }
+        Climate_Update(sensor, temperature, fanMode);
 
     } else {
         printf("Failed to read data from sensor %d.\r\n", sensor);
@@ -91,6 +66,30 @@ void CheckTemperature(AHT20_Sensor_t sensor) {
 
 }
 
+
+
+void Climate_Update(AHT20_Sensor_t sensor, float temperature, uint8_t fanMode) {
+    /* Accept only chambers 1-3 */
+    if (sensor < SENSOR_AHT20_1 || sensor > SENSOR_AHT20_3) return;
+
+    uint8_t idx     = sensor - SENSOR_AHT20_1;   /* 0,1,2                       */
+    uint8_t fanBit  = idx;                       /* bits 0-2                    */
+    uint8_t heatBit = idx + 3;                   /* bits 3-5                    */
+
+    /* ───────── Heater decision ───────── */
+    GPIO_PinState heat;
+    if      (temperature <  TEMP_MIN) heat = GPIO_PIN_SET;                      /* force ON  */
+    else if (temperature >  TEMP_MAX) heat = GPIO_PIN_RESET;                    /* force OFF */
+    else                               heat = (fanMode & (1 << heatBit)) ? GPIO_PIN_SET
+                                                                         : GPIO_PIN_RESET;
+    HAL_GPIO_WritePin(GPIOG, heatPins[idx], heat);
+
+    /* ───────── Fan decision ──────────── */
+    GPIO_PinState fan = (heat == GPIO_PIN_SET)            ? GPIO_PIN_SET        /* heater needs airflow */
+                      : (fanMode & (1 << fanBit))         ? GPIO_PIN_SET
+                                                        : GPIO_PIN_RESET;
+    HAL_GPIO_WritePin(GPIOG, fanPins[idx], fan);
+}
 
 
 // Read data from AHT20

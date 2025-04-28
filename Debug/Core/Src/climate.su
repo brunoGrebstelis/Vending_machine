@@ -3,6 +3,6 @@ climate.c:18:6:getClimateFlag	4	static
 climate.c:22:6:setAutoFlag	16	static
 climate.c:25:6:getAutoFlag	4	static
 climate.c:29:6:setFanMode	8	static
-climate.c:155:7:CalculateWindowInsideSurface	48	static
-climate.c:173:14:CalculateDewPointMagnus	40	static
-climate.c:189:6:ControlClimate	80	static
+climate.c:69:7:CalculateWindowInsideSurface	48	static
+climate.c:87:14:CalculateDewPointMagnus	40	static
+climate.c:103:6:ControlClimate	80	static

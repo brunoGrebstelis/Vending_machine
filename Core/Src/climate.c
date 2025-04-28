@@ -6,7 +6,7 @@
  */
 #include "climate.h"
 
-uint8_t fanMode = 255;
+uint8_t fanMode = 0;
 bool climate_flag = false;
 bool auto_flag = false;
 
@@ -26,131 +26,45 @@ bool getAutoFlag(){
 	return auto_flag;
 }
 
-void setFanMode(){
-    switch (fanMode){
-        case 0:
-            // All OFF
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_2, RESET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_3, RESET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_4, RESET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_5, RESET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_6, RESET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_7, RESET);
-            climate_flag = false;
-            auto_flag = false;
-            break;
+void setFanMode() {
 
-        case 1:
-            // Fan1 ON, others OFF
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_2, SET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_3, RESET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_4, RESET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_5, RESET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_6, RESET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_7, RESET);
-            climate_flag = false;
-            auto_flag = false;
-            break;
+	printf("Mode in setFanMode() in climate.c: %d\r\n", fanMode);
 
-        case 2:
-            // Fan2 ON, others OFF
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_2, RESET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_3, SET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_4, RESET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_5, RESET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_6, RESET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_7, RESET);
-            climate_flag = false;
-            auto_flag = false;
-            break;
+    // If 'fanMode' is 255, that indicates Auto => all OFF
+    if (fanMode == 255)
+    {
+        printf("AUTO ON\r\n");
+        // Turn everything OFF
+        HAL_GPIO_WritePin(GPIOG, GPIO_PIN_2, RESET); // Fan1
+        HAL_GPIO_WritePin(GPIOG, GPIO_PIN_3, RESET); // Fan2
+        HAL_GPIO_WritePin(GPIOG, GPIO_PIN_4, RESET); // Fan3
+        HAL_GPIO_WritePin(GPIOG, GPIO_PIN_5, RESET); // Heat1
+        HAL_GPIO_WritePin(GPIOG, GPIO_PIN_6, RESET); // Heat2
+        HAL_GPIO_WritePin(GPIOG, GPIO_PIN_7, RESET); // Heat3
 
-        case 3:
-            // Fan3 ON, others OFF
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_2, RESET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_3, RESET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_4, SET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_5, RESET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_6, RESET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_7, RESET);
-            climate_flag = false;
-            auto_flag = false;
-            break;
+        climate_flag = false;
+        auto_flag = true;    // We are in auto mode
+    }
+    else
+    {
+        // For 0..63, each bit indicates whether a particular output is ON (SET) or OFF (RESET).
+        // bit0 => Fan1, bit1 => Fan2, bit2 => Fan3
+        // bit3 => Heat1, bit4 => Heat2, bit5 => Heat3
 
-        case 4:
-            // Fan1 & Fan2 ON, Fan3 OFF
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_2, SET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_3, SET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_4, RESET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_5, RESET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_6, RESET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_7, RESET);
-            climate_flag = false;
-            auto_flag = false;
-            break;
+        // 1) Fans
+        HAL_GPIO_WritePin(GPIOG, GPIO_PIN_2, (fanMode & (1 << 0)) ? SET : RESET);  // Fan1
+        HAL_GPIO_WritePin(GPIOG, GPIO_PIN_3, (fanMode & (1 << 1)) ? SET : RESET);  // Fan2
+        HAL_GPIO_WritePin(GPIOG, GPIO_PIN_4, (fanMode & (1 << 2)) ? SET : RESET);  // Fan3
 
-        case 5:
-            // Fan1 & Fan3 ON, Fan2 OFF
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_2, SET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_3, RESET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_4, SET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_5, RESET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_6, RESET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_7, RESET);
-            climate_flag = false;
-            auto_flag = false;
-            break;
+        // 2) Heats
+        HAL_GPIO_WritePin(GPIOG, GPIO_PIN_5, (fanMode & (1 << 3)) ? SET : RESET);  // Heat1
+        HAL_GPIO_WritePin(GPIOG, GPIO_PIN_6, (fanMode & (1 << 4)) ? SET : RESET);  // Heat2
+        HAL_GPIO_WritePin(GPIOG, GPIO_PIN_7, (fanMode & (1 << 5)) ? SET : RESET);  // Heat3
 
-        case 6:
-            // Fan2 & Fan3 ON, Fan1 OFF
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_2, RESET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_3, SET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_4, SET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_5, RESET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_6, RESET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_7, RESET);
-            climate_flag = false;
-            auto_flag = false;
-            break;
-
-        case 7:
-            // Fan1, Fan2, Fan3 all ON
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_2, SET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_3, SET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_4, SET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_5, RESET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_6, RESET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_7, RESET);
-            climate_flag = false;
-            auto_flag = false;
-            break;
-
-        case 255:
-            // 'Auto' mode => your choice; here we do all OFF
-        	printf("AUTO ON\r\n");
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_2, RESET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_3, RESET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_4, RESET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_5, RESET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_6, RESET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_7, RESET);
-        	climate_flag = false;
-        	auto_flag = true;
-            break;
-
-        default:
-            // Unknown fanMode => default to all OFF
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_2, RESET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_3, RESET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_4, RESET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_5, RESET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_6, RESET);
-            HAL_GPIO_WritePin(GPIOG, GPIO_PIN_7, RESET);
-            climate_flag = false;
-            auto_flag = false;
-            break;
+        climate_flag = false;  // Keep same logic as original (all manual modes => climate_flag = false)
+        auto_flag = false;     // Auto is off in this branch
     }
 }
-
 
 float CalculateWindowInsideSurface(float T_in, float T_out, float area){
     // 1. Convection Resistances & Conduction
