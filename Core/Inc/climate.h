@@ -35,8 +35,8 @@
 #define CH3_WINDOW_AREA    0.054f * 0.057f
 
 // Comfort values
-#define TEMP_MIN           15.0f   // °C (minimum comfortable temperature)
-#define TEMP_MAX           22.0f   // °C (maximum comfortable temperature)
+#define TEMP_MIN           3.0f   // °C (minimum comfortable temperature)
+#define TEMP_MAX           6.0f   // °C (maximum comfortable temperature)
 #define HUMIDITY_MAX       85.0f   // %RH (example maximum humidity for flowers)
 #define HUMIDITY_MIN       60.0f   // %RH (example minimum humidit
 

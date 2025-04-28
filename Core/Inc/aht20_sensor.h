@@ -17,6 +17,7 @@
 #include "error_handler.h"
 #include "climate.h"
 
+
 #define PCA9548A_ADDRESS 0x70
 #define CHANNEL_0 0x01
 #define CHANNEL_1 0x02
@@ -39,6 +40,7 @@ typedef enum {
 } AHT20_Sensor_t;
 
 void CheckTemperature(AHT20_Sensor_t sensor);
+void Climate_Update(AHT20_Sensor_t sensor, float temperature, uint8_t fanMode);
 void AHT20_CalculateValues(uint8_t *data, float *temperature, float *humidity);
 HAL_StatusTypeDef AHT20_ReadData(I2C_HandleTypeDef *hi2c, float *temperature, float *humidity);
 HAL_StatusTypeDef AHT20_ReadData_PCA9548A(I2C_HandleTypeDef *hi2c, uint8_t pca9548a_address, uint8_t channel, float *temperature, float *humidity) ;
