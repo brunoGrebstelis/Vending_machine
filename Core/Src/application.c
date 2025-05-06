@@ -86,7 +86,7 @@ void loop_application(){
 		            CheckTemperature(SENSOR_AHT20_5);
 		            break;
 		    }
-		    sensorIndex = (sensorIndex + 1) % 7;
+		    sensorIndex = (sensorIndex + 1) % 8;
 		}
 
 	}
