@@ -87,11 +87,4 @@ void Send_Price(uint16_t addr, uint8_t b1, uint8_t b2){
 void HAL_I2C_MasterTxCpltCallback(I2C_HandleTypeDef *hi2c){if(hi2c==&hi2c1) i2c1_tx_busy=false;}
 void HAL_I2C_ErrorCallback   (I2C_HandleTypeDef *hi2c){if(hi2c==&hi2c1) i2c1_reset ();}
 
-/*
- * Notes
- * -----
- * 1) DMA is arguably overkill for 2–4‑byte payloads but frees the CPU while the
- *    bus clocks out; cost is one stream.
- * 2) General‑Call (0x00) avoided – most slaves NACK it.  Move real modules to
- *    ≥0x01 and update PRICE_BASE_ADDR/COUNT accordingly.
- */
+
