@@ -26,8 +26,12 @@ bool get_locker_flag(){
 	return lockerFlag;
 }
 
-void setErrorState(SystemErrorState state) {
+
+
+void setError(SystemErrorState state, uint8_t err_locker){
 	errorState = state;
+    error_locker = err_locker;
+    error_flag = true;
 }
 
 // Handle error states

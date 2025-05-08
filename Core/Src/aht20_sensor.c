@@ -47,18 +47,14 @@ void CheckTemperature(AHT20_Sensor_t sensor) {
     } else {
         printf("Failed to read data from sensor %d.\r\n", sensor);
         if (!tempSensFailed[sensor - 1]) {
-            setErrorState(STATE_SENSOR);
-            error_locker = sensor;
-            error_flag = true;
+        	setError(STATE_SENSOR, sensor);
             tempSensFailed[sensor - 1] = true;
         }
     }
 
     if (temperature < 0.0 && !tempBelowZero[sensor - 1]) {
         tempBelowZero[sensor - 1] = true;
-        setErrorState(STATE_TEMPERATURE);
-        error_locker = sensor;
-        error_flag = true;
+        setError(STATE_TEMPERATURE, sensor);
     } else if (temperature >= 0.0) {
         tempBelowZero[sensor - 1] = false;
     }

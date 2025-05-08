@@ -45,7 +45,7 @@ extern uint64_t openTimestamp[24];
 
 bool get_error_flag();
 bool get_locker_flag();
-void setErrorState(SystemErrorState state);
+void setError(SystemErrorState state, uint8_t err_locker);
 void HandleState();
 void CheckAllLockersAfterDelay(void);
 

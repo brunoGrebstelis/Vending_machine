@@ -62,9 +62,7 @@ void open_cabinet(uint8_t locker_id) {
                 lockerFlag = true;
             } else {
                 printf("Unexpected response when opening locker %d.\n", locker_id);
-                setErrorState(STATE_JAMMED);
-                error_locker = locker_id;
-                error_flag = true;
+                setError(STATE_JAMMED, locker_id);
             }
         } else {
             printf("No response received when opening the cabinet.\n");
@@ -138,9 +136,8 @@ int read_cabinet_status(uint8_t locker_id) {
         // Transmit the command
         RS485_Transmit(command, sizeof(command));
 
-        setErrorState(STATE_JAMMED);
-        error_locker = locker_id;
-        error_flag = true;
+        setError(STATE_JAMMED, locker_id);
+
         return -1;
     }
 }
