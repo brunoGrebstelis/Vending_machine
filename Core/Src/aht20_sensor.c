@@ -20,7 +20,7 @@ static const uint16_t heatPins[3] = { GPIO_PIN_5, GPIO_PIN_6, GPIO_PIN_7 };
 // Periodic temperature check
 void CheckTemperature(AHT20_Sensor_t sensor) {
     if (sensor < SENSOR_AHT20_1 || sensor > SENSOR_AHT20_8) {
-        printf("Invalid sensor: %d. Must be between SENSOR_AHT20_1 and SENSOR_AHT20_8.\r\n", sensor);
+        //printf("Invalid sensor: %d. Must be between SENSOR_AHT20_1 and SENSOR_AHT20_8.\r\n", sensor);
         return;
     }
 
@@ -30,8 +30,8 @@ void CheckTemperature(AHT20_Sensor_t sensor) {
 
     float temperature, humidity;
     if (AHT20_ReadData_PCA9548A(&hi2c2, PCA9548A_ADDRESS, selectedChannel, &temperature, &humidity) == HAL_OK) {
-        printf("Sensor %d - Temperature: %.2f C\r\n", sensor, temperature);
-        printf("Sensor %d - Humidity: %.2f %%RH\r\n", sensor, humidity);
+        //printf("Sensor %d - Temperature: %.2f C\r\n", sensor, temperature);
+        //printf("Sensor %d - Humidity: %.2f %%RH\r\n", sensor, humidity);
 
         int16_t tRaw = (int16_t)(temperature * 100.0f);
         int16_t hRaw = (int16_t)(humidity * 100.0f);
@@ -45,7 +45,8 @@ void CheckTemperature(AHT20_Sensor_t sensor) {
         Climate_Update(sensor, temperature, fanMode);
 
     } else {
-        printf("Failed to read data from sensor %d.\r\n", sensor);
+    	sendLogUART(sensor, 1);
+        //printf("Failed to read data from sensor %d.\r\n", sensor);
         if (!tempSensFailed[sensor - 1]) {
         	setError(STATE_SENSOR, sensor);
             tempSensFailed[sensor - 1] = true;

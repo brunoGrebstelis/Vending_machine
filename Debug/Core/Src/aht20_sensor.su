@@ -1,5 +1,5 @@
 aht20_sensor.c:21:6:CheckTemperature	56	static
-aht20_sensor.c:67:6:Climate_Update	24	static
-aht20_sensor.c:92:19:AHT20_ReadData	56	static
-aht20_sensor.c:130:6:AHT20_CalculateValues	32	static
-aht20_sensor.c:139:19:AHT20_ReadData_PCA9548A	56	static
+aht20_sensor.c:68:6:Climate_Update	24	static
+aht20_sensor.c:93:19:AHT20_ReadData	56	static
+aht20_sensor.c:131:6:AHT20_CalculateValues	32	static
+aht20_sensor.c:140:19:AHT20_ReadData_PCA9548A	56	static

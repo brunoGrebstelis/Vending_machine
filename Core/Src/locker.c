@@ -17,14 +17,14 @@ uint8_t calculate_checksum(uint8_t byte0, uint8_t byte1, uint8_t byte2, uint8_t 
 // Function to open a cabinet
 void open_cabinet(uint8_t locker_id) {
     if (locker_id < 1 || locker_id > 24) {
-        printf("Invalid locker ID. Must be between 1 and 24.\n");
+        //printf("Invalid locker ID. Must be between 1 and 24.\n");
         return;
     }
 
     // Check the cabinet status first
     int status = read_cabinet_status(locker_id);
     if (status == 1) {
-        printf("Locker %d is already open. No action required.\n", locker_id);
+        //printf("Locker %d is already open. No action required.\n", locker_id);
         return;
     } else if (status == 0) {
         uint8_t command[5];
@@ -42,33 +42,38 @@ void open_cabinet(uint8_t locker_id) {
 
         // Wait for the response
         if (HAL_UART_Receive(&huart2, response, sizeof(response), 3000) == HAL_OK) {
-            printf("Response received: ");
-            for (int i = 0; i < sizeof(response); i++) {
-                printf("0x%02X ", response[i]);
-            }
-            printf("\n");
+            //printf("Response received: ");
+
+            //for (int i = 0; i < sizeof(response); i++) {
+                //printf("0x%02X ", response[i]);
+            //}
+            //printf("\n");
 
             uint8_t expected_checksum = calculate_checksum(response[0], response[1], response[2], response[3]);
             if (response[4] != expected_checksum) {
-                printf("Response checksum error.\n");
+            	sendLogUART(locker_id, 5);
+                //printf("Response checksum error.\n");
                 return;
             }
 
             if (response[3] == 0x11) {
-                printf("Locker %d opened successfully.\n", locker_id);
+                //printf("Locker %d opened successfully.\n", locker_id);
                 lockerOpened[locker_id - 1] = true;
                 openTimestamp[locker_id - 1] = HAL_GetTick();
                 checkPending[locker_id - 1] = true;
                 lockerFlag = true;
             } else {
-                printf("Unexpected response when opening locker %d.\n", locker_id);
+                //printf("Unexpected response when opening locker %d.\n", locker_id);
+                sendLogUART(locker_id, 6);
                 setError(STATE_JAMMED, locker_id);
             }
         } else {
-            printf("No response received when opening the cabinet.\n");
+            //printf("No response received when opening the cabinet.\n");
+            sendLogUART(locker_id, 7);
         }
     } else {
-        printf("Failed to determine the status of locker %d. Aborting open operation.\n", locker_id);
+        //printf("Failed to determine the status of locker %d. Aborting open operation.\n", locker_id);
+        sendLogUART(locker_id, 8);
     }
 }
 
@@ -80,7 +85,7 @@ void open_cabinet(uint8_t locker_id) {
 // Function to read the cabinet status
 int read_cabinet_status(uint8_t locker_id) {
     if (locker_id < 1 || locker_id > 24) {
-        printf("Invalid locker ID. Must be between 1 and 24.\n");
+        //printf("Invalid locker ID. Must be between 1 and 24.\n");
         return -1;
     }
 
@@ -100,32 +105,35 @@ int read_cabinet_status(uint8_t locker_id) {
     // Wait for the response
     if (HAL_UART_Receive(&huart2, response, sizeof(response), 1000) == HAL_OK) {
         // Print the raw response
-        printf("Response received: ");
-        for (int i = 0; i < sizeof(response); i++) {
-            printf("0x%02X ", response[i]);
-        }
-        printf("\n");
+        //printf("Response received: ");
+       // for (int i = 0; i < sizeof(response); i++) {
+        //    printf("0x%02X ", response[i]);
+       // }
+        //printf("\n");
 
         // Validate the response
         uint8_t expected_checksum = calculate_checksum(response[0], response[1], response[2], response[3]);
         if (response[4] != expected_checksum) {
-            printf("Response checksum error.\n");
+            //printf("Response checksum error.\n");
+        	sendLogUART(locker_id, 5);
             return -1;
         }
 
         // Interpret the response
         if (response[3] == 0x11) {
-            printf("Locker %d is open.\n", locker_id);
+            //printf("Locker %d is open.\n", locker_id);
             return 1; // Locker is open
         } else if (response[3] == 0x00) {
-            printf("Locker %d is closed.\n", locker_id);
+            //printf("Locker %d is closed.\n", locker_id);
             return 0; // Locker is closed
         } else {
-            printf("Unexpected response for locker %d.\n", locker_id);
+            //printf("Unexpected response for locker %d.\n", locker_id);
+        	sendLogUART(locker_id, 6);
             return -1; // Error or unexpected
         }
     } else {
-        printf("No response received when reading the cabinet status.\n");
+        //printf("No response received when reading the cabinet status.\n");
+    	sendLogUART(locker_id, 7);
         // Build the command to open the cabinet
         command[0] = 0x8A;
         command[1] = 0x01;

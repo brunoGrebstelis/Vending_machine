@@ -27,6 +27,7 @@ typedef enum {
     STATE_LED_DRIVER,     // Case 5
     STATE_TEMPERATURE,    // Case 6
     STATE_SENSOR,         // Case 7
+	STATE_UART,
     NO_ERROR
 } SystemErrorState;
 
@@ -46,6 +47,7 @@ extern uint64_t openTimestamp[24];
 bool get_error_flag();
 bool get_locker_flag();
 void setError(SystemErrorState state, uint8_t err_locker);
+void sendLogUART(uint8_t err_locker, uint8_t cmd);
 void HandleState();
 void CheckAllLockersAfterDelay(void);
 

@@ -1,5 +1,7 @@
-error_handler.c:22:6:get_error_flag	4	static
-error_handler.c:25:6:get_locker_flag	4	static
-error_handler.c:31:6:setError	16	static
-error_handler.c:38:6:HandleState	24	static
-error_handler.c:93:6:CheckAllLockersAfterDelay	32	static
+error_handler.c:23:6:get_error_flag	4	static
+error_handler.c:26:6:get_locker_flag	4	static
+error_handler.c:30:13:reSetError	4	static
+error_handler.c:36:6:sendLogUART	16	static
+error_handler.c:42:6:setError	16	static
+error_handler.c:49:6:HandleState	24	static
+error_handler.c:99:6:CheckAllLockersAfterDelay	32	static

@@ -28,7 +28,8 @@ bool getAutoFlag(){
 
 void setFanMode() {
 
-	printf("Mode in setFanMode() in climate.c: %d\r\n", fanMode);
+	sendLogUART(fanMode, 2);
+	//printf("Mode in setFanMode() in climate.c: %d\r\n", fanMode);
 
     // If 'fanMode' is 255, that indicates Auto => all OFF
     if (fanMode == 255)
